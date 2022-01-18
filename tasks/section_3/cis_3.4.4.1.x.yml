@@ -1,6 +1,6 @@
 ---
 
-- name: "3.4.4.1.1 | L1 | PATCH | Ensure iptables default deny firewall policy"
+- name: "3.4.4.1.1 | L1 | PATCH | Iptables Clean slate"
   block:
       - name: "3.4.4.1.1 | L1 |  PATCH |  Ensure iptables default deny firewall policy | Configure ssh to be allowed"
         iptables:
@@ -8,6 +8,7 @@
             protocol: tcp
             destination_port: "22"
             jump: ACCEPT
+        when: need_ssh_rule.stdout == "no"
 
       - name: "3.4.4.1.1 | L1 | PATCH | Ensure iptables default deny firewall policy | Set drop items"
         iptables:
@@ -16,7 +17,7 @@
         with_items:
             - INPUT
             - FORWARD
-            - OUTPUT
+
   when:
       - rhel8cis_rule_3_4_4_1_1
       - rhel8cis_firewall == "iptables"
@@ -48,6 +49,13 @@
             chain: INPUT
             source: 127.0.0.0/8
             jump: DROP
+
+      - name: "3.4.4.1.2 | L1 | PATCH | Ensure iptables loopback traffic is configured | INPUT VPC 10.2.18.0/23"
+        iptables:
+            action: append
+            chain: INPUT
+            source: 10.2.18.0/23
+            jump: ACCEPT            
   when:
       - rhel8cis_firewall == "iptables"
       - rhel8cis_rule_3_4_4_1_2

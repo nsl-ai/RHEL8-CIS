@@ -201,6 +201,24 @@
       - services
       - patch
       - rule_2.2.7
+             
+- name: "2.2.13 | L1 | PATCH | Ensure RPC socket is not enabled"
+  service:
+      name: rpcbind.socket
+      state: stopped
+      enabled: no
+  when:
+      - not rhel8cis_nfs_rpc_server
+      - "'rpcbind' in ansible_facts.packages"
+      - rhel8cis_rule_2_2_13
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - rpc
+      - services
+      - patch
+      - rule_2.2.7      
 
 - name: "2.2.14 | L1 | PATCH | Ensure LDAP server is not enabled"
   service:
@@ -286,3 +304,14 @@
       - level1-workstation
       - patch
       - rule_2.2.1
+
+- name: "2.2.19 | L1 | PATCH | Ensure cockpit is not installed"
+  yum:
+    name: cockpit*
+    state: absent
+  when:
+      - not rhel8cis_is_cockpit_server
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch

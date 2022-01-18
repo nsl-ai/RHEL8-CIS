@@ -1,6 +1,42 @@
 ---
 # Post tasks
 
+- name: Save current state of the firewall in system file
+  community.general.iptables_state:
+    state: saved
+    path: /etc/sysconfig/iptables
+  when:
+    - rhel8cis_rule_3_4_4_1_1
+    - rhel8cis_rule_3_4_4_1_2   
+    - rhel8cis_rule_3_4_4_1_3
+    - rhel8cis_rule_3_4_4_1_4   
+    - rhel8cis_rule_3_4_4_1_5
+  become: true
+
+- name: Import elrepo key
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+  when: ansible_kernel is version('5.10', operator='lt')
+
+
+- name: Add ELRepo
+  dnf:
+    name: https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
+    state: latest
+  when: ansible_kernel is version('5.10', operator='lt')
+
+- name: Install the latest mainline kernel
+  yum:
+    name: kernel-ml
+    state: latest
+    enablerepo: elrepo-kernel  
+  when: ansible_kernel is version('5.10', operator='lt')
+
+- name: Remake grub config to pick up new kernel
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+  when: ansible_kernel is version('5.10', operator='lt')
+
 - name: Perform DNF package cleanup
   dnf:
       autoremove: yes

@@ -108,3 +108,8 @@
       - rhel8cis_rule_1_2_2
   tags:
       - skip_ansible_lint
+
+- name: "PRELIM | Section 3.4.4.1 | Check for iptables rules closed"
+  shell: iptables -S | grep -q '--dport 22'  && echo -n yes || echo -n no
+  register: need_ssh_rule
+  changed_when: no
