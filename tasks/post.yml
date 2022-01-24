@@ -2,9 +2,7 @@
 # Post tasks
 
 - name: Save current state of the firewall in system file
-  community.general.iptables_state:
-    state: saved
-    path: /etc/sysconfig/iptables
+  command: iptables-save > /etc/sysconfig/iptables
   when:
     - rhel8cis_rule_3_4_4_1_1
     - rhel8cis_rule_3_4_4_1_2   

@@ -331,6 +331,20 @@
       - patch
       - rule_5.2.19
 
+- name: Replace the content of my file
+  copy:
+    src: /etc/crypto-policies/back-ends/opensshserver.config
+    dest: /etc/crypto-policies/back-ends/opensshserver.config
+    force: yes
+  notify: restart sshd
+  when:
+      - rhel8cis_rule_5_2_20
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_5.2.20    
+
 - name: "5.2.20 | L1 | PATCH | Ensure system-wide crypto policy is not over-ridden"
   shell: sed -ri "s/^\s*(CRYPTO_POLICY\s*=.*)$/# \1/" /etc/sysconfig/sshd
   args:

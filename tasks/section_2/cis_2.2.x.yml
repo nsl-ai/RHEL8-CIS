@@ -315,3 +315,18 @@
       - level1-server
       - level1-workstation
       - patch
+
+- name: "2.2.19 | L1 | PATCH | Ensure zabbix is not installed"
+  yum:
+    name: zabbix*
+    state: absent
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+
+- name: "Ruby update"
+  command: |
+     sudo dnf module reset ruby
+     sudo dnf module install ruby:2.7
+     sudo dnf --allowerasing distro-sync
